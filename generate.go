@@ -110,4 +110,9 @@ var (
 	{{$entry.Name}} = color.RGBA{R: 0x{{$entry.R}}, G: 0x{{$entry.G}}, B: 0x{{$entry.B}}, A:0xff }
 	{{end}}
 )
+
+// All is a slice of all the colors.
+var All = []color.RGBA{ {{range .}}
+	{{.Name}},{{end}}
+}
 `
