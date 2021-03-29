@@ -53,7 +53,7 @@ func parseLine(line string) entry {
 	parts[0] = strings.ReplaceAll(parts[0], "'", "")
 	parts[0] = strings.Title(parts[0])
 	parts[0] = strings.ReplaceAll(parts[0], " ", "")
-	parts[0] = strings.ReplaceAll(parts[0], "\\", "_")
+	parts[0] = strings.ReplaceAll(parts[0], "/", "_")
 	// clean color value
 	parts[1] = strings.TrimPrefix(parts[1], "#")
 
@@ -82,7 +82,10 @@ func parseSource(r io.Reader) (entries []entry, err error) {
 }
 
 func writeDestination(dest io.Writer, entries []entry) error {
-	t, err := template.New("").Parse(codetemplate)
+	t := template.New("").Funcs(template.FuncMap{
+		"plusone": func(i int) int { return i + 1 },
+	})
+	t, err := t.Parse(codetemplate)
 	if err != nil {
 		return err
 	}
@@ -101,9 +104,9 @@ package xkcdcolors
 
 import "image/color"
 
-const (
+var (
 	{{range $index, $entry := .}}
-	// {{$index}} {{$entry.Original}}
+	// {{plusone $index}} {{$entry.Original}}
 	{{$entry.Name}} = color.RGBA{R: 0x{{$entry.R}}, G: 0x{{$entry.G}}, B: 0x{{$entry.B}}, A:0xff }
 	{{end}}
 )
